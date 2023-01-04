@@ -24,11 +24,12 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 @RestController
 @AllArgsConstructor
 @Log4j2
+@RequestMapping(path = "product")
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 public class ProductController {
 
 
     private final ProductService productService;
-    StorageServiceImplementation storageService;
 
     @PostMapping("/")
     public ResponseEntity<Product> registerNewProduct(@Valid @RequestBody Product product) {
@@ -52,12 +53,12 @@ public class ProductController {
     }
 
     @PostMapping(path = "/updateProfileImage",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Product> updateProfileImage(@RequestParam Integer productId,
-                                                     @RequestParam(value = "productImage") MultipartFile productImage) throws IOException, NotAnImageFileException {
+                                                      @RequestParam(value = "productImage") MultipartFile productImage) throws IOException, NotAnImageFileException {
         var result = productService.updateProfileImage(productId, productImage);
         return new ResponseEntity<>(result, OK);
     }
-
 
 }

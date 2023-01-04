@@ -43,7 +43,7 @@ public class ProductService {
 
        product.setName(product.getName().replaceAll("\\s", "_"));
         if (productImage != null) {
-            if (!Arrays.asList(IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE, IMAGE_GIF_VALUE).contains(productImage.getContentType())) {
+            if (!Arrays.asList(IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE).contains(productImage.getContentType())) {
                 throw new NotAnImageFileException(productImage.getOriginalFilename() + NOT_AN_IMAGE_FILE);
             }
             Path userFolder = Paths.get(USER_FOLDER + product.getName()).toAbsolutePath().normalize();
@@ -51,10 +51,11 @@ public class ProductService {
                 Files.createDirectories(userFolder);
                 log.info(DIRECTORY_CREATED + userFolder);
             }
-            Files.deleteIfExists(Paths.get(userFolder + product.getName() + DOT + JPG_EXTENSION));
+            var simplePath = Paths.get(userFolder+"\\" + product.getName() + DOT + JPG_EXTENSION);
+
+            Files.deleteIfExists(simplePath);
 
             Files.copy(productImage.getInputStream(), userFolder.resolve(product.getName() + DOT + JPG_EXTENSION), REPLACE_EXISTING);
-
 
             product.setProfileImageUrl(setProductImageUrl(product.getName()));
             productRepository.save(product);
